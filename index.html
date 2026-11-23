@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Владимир – 3D-визуализатор</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&subset=cyrillic&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&subset=cyrillic&display=swap"></noscript>
+<style>
+:root{--a:#C35B2E;--b:#B39A7D;--c:#CDBCAC;--ink:#1b1814;--t:6rem}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--c)}
+body{background:var(--c);color:var(--ink);font-family:'Oswald',system-ui,sans-serif;overflow-x:clip}
+a{color:inherit;text-decoration:none}img{display:block;max-width:100%}
+.fade{opacity:0;transform:translateY(var(--y,30px));transition:opacity .7s cubic-bezier(.25,.1,.25,1) var(--d,0s),transform .7s cubic-bezier(.25,.1,.25,1) var(--d,0s)}
+.fade.in{opacity:1;transform:none}
+.btn{display:inline-block;background:var(--a);color:#fff;border-radius:999px;padding:1.1rem 3.2rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;font-size:1.1rem;transition:transform .2s,opacity .2s}
+.btn:hover{opacity:.9;transform:translateY(-2px)}
+.big{font-size:clamp(3rem,12vw,160px);font-weight:700;text-transform:uppercase;line-height:1;letter-spacing:-.02em}
+/* hero */
+.hero{height:100vh;min-height:600px;display:flex;flex-direction:column}
+nav{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.75rem;padding:1.25rem 1.5rem 0;text-transform:uppercase;letter-spacing:.05em;font-weight:500;font-size:1.05rem}
+nav img{height:56px;width:auto}
+nav .lk{display:flex;justify-content:space-between;width:100%}
+nav a{transition:opacity .2s}nav a:hover{opacity:.6}
+.h1w{flex:1;display:flex;align-items:center;justify-content:center}
+h1{font-weight:700;text-transform:uppercase;line-height:.95;text-align:center;font-size:min(16vw,22vh)}
+h1 em{font-style:normal;color:var(--a)}
+.bar{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;padding:0 1.5rem 2rem}
+.bar p{font-weight:400;text-transform:uppercase;letter-spacing:.03em;line-height:1.25;max-width:230px;font-size:clamp(.85rem,1.4vw,1.4rem)}
+@media(min-width:768px){nav{padding:2rem 2.5rem 0}nav img{height:72px}nav .lk{width:auto;gap:3.5rem;font-size:1.6rem}.bar{padding:0 2.5rem 2.5rem}.bar p{max-width:320px}}
+@media(min-width:1024px){nav .lk{font-size:2rem}}
+/* marquee */
+.mq{background:var(--b);padding:2rem 0 .75rem;overflow:hidden;margin-top:4rem}
+.row{display:flex;gap:.75rem;width:max-content;will-change:transform;margin:0 0 .75rem -500px}
+.row img{width:420px;height:270px;object-fit:cover;border-radius:1rem;flex:none}
+/* about */
+.about{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4rem;padding:5rem 1.25rem;text-align:center}
+.txt{max-width:860px;font-weight:500;line-height:1.5;font-size:clamp(1.3rem,3.2vw,2.4rem)}
+.txt span{opacity:.2}
+.stack{display:flex;flex-direction:column;align-items:center;gap:3rem}
+@media(min-width:768px){.btn.lg{padding:1.4rem 4.2rem;font-size:1.35rem}}
+/* services */
+.svc,.ct{border-radius:40px 40px 0 0;position:relative}
+.svc{background:var(--b);padding:5rem 1rem 4rem;margin-top:-2.5rem;z-index:5}
+.svc>.big{text-align:center;margin-bottom:3rem}
+.ct{background:var(--c);margin-top:-2.5rem;z-index:10;padding:6rem 1rem 3rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2rem}
+.ct p{font-size:clamp(1.1rem,2vw,1.6rem);font-weight:400}
+.ct .bs{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+.btn.o{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.kl{text-align:center;margin-top:1.5rem}.kl .btn{padding:1rem 2.4rem;font-size:1rem}
+@media(max-width:639px){.ct .bs{flex-direction:column;align-items:stretch;width:100%;max-width:340px}.ct .bs .btn{text-align:center;padding-left:1rem;padding-right:1rem}}
+.ct small{opacity:.6;margin-top:3rem;display:flex;align-items:center;gap:1rem}.ct small img{height:44px}
+@media(min-width:640px){.svc,.ct{border-radius:50px 50px 0 0}.svc{padding:6rem 2rem 5rem}}
+@media(min-width:768px){.svc,.ct{border-radius:60px 60px 0 0}}
+.blk{background:var(--c);max-width:1200px;margin:0 auto 1.5rem;border-radius:32px;padding:1.25rem}
+@media(min-width:768px){.blk{border-radius:56px;padding:2.5rem}}
+.bh{display:flex;gap:1.25rem;align-items:flex-start;margin-bottom:1.5rem}
+.bh .num{font-weight:700;line-height:1;color:var(--a);font-size:clamp(2.5rem,8vw,120px)}
+.bh h3{font-weight:600;text-transform:uppercase;line-height:1.05;font-size:clamp(1.5rem,3.4vw,3rem)}
+.bh p{font-weight:300;opacity:.75;line-height:1.5;margin-top:.4rem;font-size:clamp(1rem,1.6vw,1.3rem);max-width:36rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.25rem}
+.tabs button{font:inherit;cursor:pointer;border:2px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:.55rem 1.4rem;text-transform:uppercase;letter-spacing:.06em;font-weight:500;font-size:clamp(.85rem,1.3vw,1.1rem);transition:.2s}
+.tabs button.on{background:var(--a);border-color:var(--a);color:#fff}
+.pane{display:none}.pane.on{display:block}
+.gal{columns:2;column-gap:.75rem}
+@media(min-width:768px){.gal{columns:3;column-gap:1rem}}
+.gal img{width:100%;height:auto;margin-bottom:.75rem;border-radius:18px;cursor:zoom-in;break-inside:avoid;transition:transform .3s}
+@media(min-width:768px){.gal img{margin-bottom:1rem;border-radius:24px}}
+.gal img:hover{transform:scale(1.015)}
+.gw{position:relative;overflow:hidden;--ch:540px}
+.gw.cl{max-height:var(--ch);transition:max-height .9s cubic-bezier(.22,.8,.2,1)}
+.gw.cl:after{content:"";position:absolute;left:0;right:0;bottom:0;height:50%;background:linear-gradient(to bottom,rgba(205,188,172,0),var(--c) 85%);pointer-events:none;transition:opacity .6s}
+.gw.open:after{opacity:0}
+@media(min-width:768px){.gw{--ch:620px}}
+.more{display:block;position:relative;z-index:2;margin:-4.5rem auto 0;font:inherit;cursor:pointer;background:var(--a);color:#fff;border:0;border-radius:999px;padding:1rem 2.8rem;text-transform:uppercase;letter-spacing:.1em;font-weight:500;font-size:1.05rem;transition:margin .6s,opacity .2s,transform .2s}.more.o{margin-top:1.5rem}.more:hover{opacity:.9;transform:translateY(-2px)}
+.tours{display:grid;gap:1rem}@media(min-width:900px){.tours{grid-template-columns:repeat(3,1fr)}}
+.ku-embed{width:100%;aspect-ratio:4/3;border:0;border-radius:22px;background:rgba(27,24,20,.08);display:block}
+.cmps{display:grid;gap:1rem;align-items:start}.cmps.two>:last-child:nth-child(odd){grid-column:1/-1}.cmps.two>:last-child:nth-child(odd){max-width:none}@media(min-width:900px){.cmps.two{grid-template-columns:1fr 1fr}}
+.cmp{position:relative;aspect-ratio:var(--ar,16/9);border-radius:22px;overflow:hidden;--p:50%}
+.cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cmp .af{clip-path:inset(0 0 0 var(--p))}
+.cmp i{position:absolute;top:0;bottom:0;left:var(--p);width:3px;background:#fff;margin-left:-1.5px;box-shadow:0 0 8px rgba(0,0,0,.4)}
+.cmp i:after{content:"↔";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:var(--a);color:#fff;display:grid;place-items:center}
+.cmp b{position:absolute;bottom:.6rem;padding:.2rem .7rem;border-radius:99px;background:rgba(27,24,20,.6);color:#fff;font-size:.8rem;font-weight:400;text-transform:uppercase;letter-spacing:.08em}
+.cmp .l{left:.6rem}.cmp .rr{right:.6rem}
+.cmp input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;touch-action:pan-y;margin:0}
+#lb{position:fixed;inset:0;z-index:100;background:rgba(15,12,10,.94);display:none;align-items:center;justify-content:center;padding:3rem 1rem}
+#lb.on{display:flex}#lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px}
+#lb button{position:absolute;background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:50%;width:52px;height:52px;font-size:2rem;line-height:1;cursor:pointer;transition:background .2s}
+#lb button:hover{background:var(--a)}
+#lb .x{top:1rem;right:1rem}#lb .pv{left:.75rem;top:50%;margin-top:-26px}#lb .nx{right:.75rem;top:50%;margin-top:-26px}
+</style></head><body>
+<section class="hero">
+ <nav class="fade" style="--y:-20px"><img id="lg" alt="VLAD 3D VIZ"><div class="lk"><a href="#about">Обо мне</a><a href="#services">Услуги</a><a href="#contacts">Контакты</a></div></nav>
+ <div class="h1w fade" style="--d:.15s;--y:40px"><h1>Привет,<br>я <em>Владимир</em></h1></div>
+ <div class="bar"><p class="fade" style="--d:.35s">3D-визуализатор: интерьеры, экстерьеры, нейровизуализация</p><a class="btn fade" style="--d:.5s" href="https://t.me/Real_3d_vizer" target="_blank" rel="noopener">Связаться</a></div>
+</section>
+<section class="mq"><div class="row" id="r1"></div><div class="row" id="r2"></div></section>
+<section class="about" id="about">
+ <h2 class="big fade">Обо мне</h2>
+ <div class="stack"><p class="txt" id="at">Меня зовут Владимир. Я занимаюсь 3D-визуализацией: интерьеры, экстерьеры, предметная нейровизуализация и улучшение рендеров с помощью нейросетей. Давайте создадим что-то невероятное вместе!</p><a class="btn lg" href="https://t.me/Real_3d_vizer" target="_blank" rel="noopener">Связаться</a></div>
+</section>
+<section class="svc" id="services"><h2 class="big fade">Услуги</h2><div id="blocks"></div></section>
+<section class="ct" id="contacts">
+ <h2 class="big fade">Контакты</h2><p>Напишите мне, и мы обсудим ваш проект.</p>
+ <div class="bs"><a class="btn lg" id="cb" href="https://t.me/Real_3d_vizer" target="_blank" rel="noopener">Написать мне</a><a class="btn lg o" href="https://t.me/vlad_3D_visual" target="_blank" rel="noopener">Телеграм-канал</a><a class="btn lg o" href="https://www.behance.net/vlad3dviz/projects" target="_blank" rel="noopener">Behance</a></div>
+ <small><img id="lg2" alt=""> © Владимир · 3D-визуализация</small>
+</section>
+<script>
+const IMG=Object.fromEntries(["z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8", "z9", "k1", "k2", "k3", "k4", "k5", "e1", "e2", "e3", "e4", "e5", "e6", "bc", "br", "kr", "gha", "ghb", "dha", "dhb", "cha", "chb", "sba", "sbb", "soa", "sob", "sga", "sgb", "sun", "day", "win", "col"].map(k=>[k,'images/'+k+'.jpg']));IMG.logo='images/logo.png';
+const TH=Object.fromEntries(["z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8", "z9", "k1", "k2", "k3", "k4", "k5", "e1", "e2", "e3", "e4", "e5", "e6", "bc", "br", "kr", "gha", "ghb", "dha", "dhb", "cha", "chb", "sba", "sbb", "soa", "sob", "sga", "sgb", "sun", "day", "win", "col"].map(k=>[k,'images/t/'+k+'.jpg']));
+const DIM={"z1": [640, 423], "z2": [640, 457], "z3": [523, 640], "z4": [417, 640], "z5": [575, 640], "z6": [432, 640], "z7": [432, 640], "z8": [480, 640], "z9": [550, 640], "k1": [494, 640], "k2": [536, 640], "k3": [640, 486], "k4": [429, 640], "k5": [476, 640], "e1": [640, 360], "e2": [357, 640], "e3": [542, 640], "e4": [640, 383], "e5": [640, 433], "e6": [640, 478], "bc": [640, 428], "br": [640, 478], "kr": [640, 478], "gha": [640, 383], "ghb": [640, 383], "dha": [640, 433], "dhb": [640, 433], "cha": [640, 480], "chb": [478, 640], "sba": [640, 480], "sbb": [640, 478], "soa": [640, 640], "sob": [640, 478], "sga": [640, 425], "sgb": [640, 357], "sun": [640, 357], "day": [640, 360], "win": [640, 357], "col": [640, 461]};
+const $=s=>document.querySelector(s),clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+$('#lg').src=$('#lg2').src=IMG.logo;
+const im=(k,c='')=>`<img class="${c}" loading="lazy" src="${IMG[k]}" alt="">`;
+const AR={"bc": "2047/1370", "br": "1200/896", "kr": "2400/1792", "gha": "2200/1318", "ghb": "2576/1543", "dha": "1920/1300", "dhb": "2506/1696", "cha": "1500/1126", "chb": "896/1200", "sba": "1600/1200", "sbb": "2400/1792", "soa": "736/736", "sob": "2400/1792", "sga": "1100/730", "sgb": "2576/1438", "win": "1456/813", "col": "1217/877"};
+const cmp=(a,b)=>`<div class="cmp" style="--ar:${AR[b]||'16/9'}">${im(a)}${im(b,'af')}<i></i><b class="l">До</b><b class="rr">После</b><input type="range" min="0" max="100" value="50" aria-label="Сравнение"></div>`;
+const cm=l=>`<div class="cmps${l.length>1?' two':''}">${l.map(p=>cmp(p[0],p[1])).join('')}</div>`;
+const gal=l=>{const m=l.length>3;return `<div class="gw${m?' cl':''}"><div class="gal">${l.map((k,i)=>`<img class="fade" style="--y:20px" src="${TH[k]}" width="${DIM[k][0]}" height="${DIM[k][1]}" data-l="${l.join(',')}" data-i="${i}" alt="">`).join('')}</div></div>${m?`<button class="more">Смотреть ещё</button>`:''}`};
+const Z=[1,2,3,4,5,6,7,8,9].map(i=>'z'+i),K=[1,2,3,4,5].map(i=>'k'+i),E=['sun',...[1,2,3,4,5,6].map(i=>'e'+i)];
+const KUULA='https://kuula.co/profile/Vlad3dviz/collections';
+const tours=['7TvRh','7cdvM','7b1ZW'];
+const tour=`<div class="tours">${tours.map(id=>`<iframe class="ku-embed" frameborder="0" loading="lazy" allow="xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen scrolling="no" data-src="https://kuula.co/share/collection/${id}?logo=1&info=1&fs=1&vr=0&thumbs=1"></iframe>`).join('')}</div>${KUULA?`<div class="kl"><a class="btn o" href="${KUULA}" target="_blank" rel="noopener">Все 3D-туры на Kuula</a></div>`:''}`;
+const B=[["01","Интерьерная визуализация","Реалистичные визуализации жилых и коммерческих интерьеров.",[["Жилые интерьеры",gal(Z)],["Коммерческие интерьеры",gal(K)],["3D-тур",tour]]],
+["02","Экстерьерная визуализация","Реалистичные визуализации зданий и прилегающей территории.",[["Экстерьеры",gal(E)]]],
+["03","Нейровизуализация","Улучшение рендеров и работа через нейросети.",[["По коллажам",cm([['bc','br'],['col','kr']])],["Ландшафтный AI-дизайн",cm([['day','win'],['gha','ghb'],['dha','dhb']])],["Предметная нейровизуализация",cm([['sba','sbb'],['soa','sob'],['sga','sgb'],['cha','chb']])]]]];
+$('#blocks').innerHTML=B.map((b,bi)=>`<div class="blk fade"><div class="bh"><div class="num">${b[0]}</div><div><h3>${b[1]}</h3><p>${b[2]}</p></div></div>${b[3].length>1?`<div class="tabs">${b[3].map((t,i)=>`<button class="${i?'':'on'}" data-b="${bi}" data-t="${i}">${t[0]}</button>`).join('')}</div>`:''}${b[3].map((t,i)=>`<div class="pane ${i?'':'on'}" data-b="${bi}" data-t="${i}">${t[1]}</div>`).join('')}</div>`).join('');
+document.addEventListener('click',e=>{const mo=e.target.closest('.more');if(mo){const g=mo.previousElementSibling;if(!g.classList.contains('open')){g.style.maxHeight=g.scrollHeight+'px';g.classList.add('open');mo.classList.add('o');mo.textContent='Свернуть';g.addEventListener('transitionend',()=>{if(g.classList.contains('open'))g.style.maxHeight='none'},{once:true})}else{g.style.maxHeight=g.scrollHeight+'px';g.offsetHeight;g.classList.remove('open');g.style.maxHeight='';mo.classList.remove('o');mo.textContent='Смотреть ещё';mo.closest('.blk').scrollIntoView({behavior:'smooth',block:'start'})}return}const t=e.target.closest('.tabs button');if(t){document.querySelectorAll(`[data-b="${t.dataset.b}"]`).forEach(x=>x.classList.toggle('on',x.dataset.t===t.dataset.t&&x.tagName!=='IMG'))}
+const g=e.target.closest('.gal img');if(g)openLb(g.dataset.l.split(','),+g.dataset.i)});
+document.querySelectorAll('.cmp input').forEach(r=>r.addEventListener('input',()=>r.parentElement.style.setProperty('--p',r.value+'%')));
+document.addEventListener('click',e=>{if(!e.target.closest('.tabs button'))return;setTimeout(()=>document.querySelectorAll('.pane.on iframe[data-src]').forEach(f=>{f.src=f.dataset.src;f.removeAttribute('data-src')}))});
+// lightbox
+const lb=document.createElement('div');lb.id='lb';lb.innerHTML='<button class="x" aria-label="Закрыть">×</button><button class="pv" aria-label="Назад">‹</button><button class="nx" aria-label="Вперёд">›</button><img alt="">';document.body.appendChild(lb);
+let cur=[],ci=0;const lbi=lb.querySelector('img');
+function showLb(){lbi.src=IMG[cur[ci]]}
+function openLb(l,i){cur=l;ci=i;showLb();lb.classList.add('on');document.body.style.overflow='hidden'}
+function closeLb(){lb.classList.remove('on');document.body.style.overflow=''}
+function step(d){ci=(ci+d+cur.length)%cur.length;showLb()}
+lb.addEventListener('click',e=>{if(e.target.closest('.x')||e.target===lb)closeLb();else if(e.target.closest('.pv'))step(-1);else if(e.target.closest('.nx'))step(1)});
+addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
+let tx=0;lb.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});lb.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)step(d>0?-1:1)});
+// marquee
+const mk=a=>{let h='';for(let k=0;k<2;k++)a.forEach(s=>h+=`<img loading="lazy" decoding="async" src="${TH[s]}" alt="">`);return h};
+const r1=$('#r1'),r2=$('#r2');r1.innerHTML=mk(['z1','e1','k1','z4','e4','z8','k3','e5']);r2.innerHTML=mk(['z3','k5','e2','z7','sun','z2','e6','k4']);
+// about text
+const at=$('#at'),t=at.textContent;at.textContent='';const ch=[...t].map(c=>{const s=document.createElement('span');s.textContent=c;at.appendChild(s);return s});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'50px'});
+document.querySelectorAll('.fade').forEach(e=>io.observe(e));
+const mq=document.querySelector('.mq');
+let mqY=0,mqH=0,atY=0,atH=0,busy=false;const prev=new Array(ch.length).fill(-1);
+function measure(){const a=mq.getBoundingClientRect(),b=at.getBoundingClientRect();mqY=a.top+scrollY;mqH=a.height;atY=b.top+scrollY;atH=b.height;tick()}
+function tick(){busy=false;const vh=innerHeight,sy=scrollY;
+if(sy+vh>mqY-100&&sy<mqY+mqH+100){const off=(sy-mqY+vh)*.3;r1.style.transform=`translate3d(${off-200}px,0,0)`;r2.style.transform=`translate3d(${-(off-200)}px,0,0)`}
+const p=clamp((.8*vh-(atY-sy))/(.6*vh+atH)),n=ch.length;
+ch.forEach((c,i)=>{const o=Math.round((.2+.8*clamp(p*n-i))*50)/50;if(o!==prev[i]){prev[i]=o;c.style.opacity=o}})}
+const req=()=>{if(!busy){busy=true;requestAnimationFrame(tick)}};
+addEventListener('scroll',req,{passive:true});addEventListener('resize',measure);addEventListener('load',measure);measure();
+</script></body></html>
