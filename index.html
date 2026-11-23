@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru"><head>
+<link rel="icon" href="./favicon.ico" type="image/x-icon">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Владимир – 3D-визуализатор</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&subset=cyrillic&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&subset=cyrillic&display=swap"></noscript>
@@ -154,3 +155,4 @@ ch.forEach((c,i)=>{const o=Math.round((.2+.8*clamp(p*n-i))*50)/50;if(o!==prev[i]
 const req=()=>{if(!busy){busy=true;requestAnimationFrame(tick)}};
 addEventListener('scroll',req,{passive:true});addEventListener('resize',measure);addEventListener('load',measure);measure();
 </script></body></html>
+
