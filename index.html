@@ -139,18 +139,19 @@ lb.addEventListener('click',e=>{if(e.target.closest('.x')||e.target===lb)closeLb
 addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
 let tx=0;lb.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});lb.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)step(d>0?-1:1)});
 // marquee
-const mk=a=>{let h='';for(let k=0;k<2;k++)a.forEach(s=>h+=`<img loading="lazy" decoding="async" src="${TH[s]}" alt="">`);return h};
+const mk=a=>{let h='';for(let k=0;k<2;k++)a.forEach(s=>h+=`<img loading="lazy" decoding="async" src="images/carousel/${s}.webp" alt="">`);return h};
 const r1=$('#r1'),r2=$('#r2');r1.innerHTML=mk(['z1','e1','k1','z4','e4','z8','k3','e5']);r2.innerHTML=mk(['z3','k5','e2','z7','sun','z2','e6','k4']);
 // about text
 const at=$('#at'),t=at.textContent;at.textContent='';const ch=[...t].map(c=>{const s=document.createElement('span');s.textContent=c;at.appendChild(s);return s});
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'50px'});
 document.querySelectorAll('.fade').forEach(e=>io.observe(e));
-const mq=document.querySelector('.mq');
-let mqY=0,mqH=0,atY=0,atH=0,busy=false;const prev=new Array(ch.length).fill(-1);
-function measure(){const a=mq.getBoundingClientRect(),b=at.getBoundingClientRect();mqY=a.top+scrollY;mqH=a.height;atY=b.top+scrollY;atH=b.height;tick()}
+const mq=document.querySelector('.mq'),aboutButton=at.parentElement.querySelector('.btn');
+let mqY=0,mqH=0,atY=0,aboutButtonY=0,busy=false;const prev=new Array(ch.length).fill(-1);
+function measure(){const a=mq.getBoundingClientRect(),b=at.getBoundingClientRect();mqY=a.top+scrollY;mqH=a.height;atY=b.top+scrollY;aboutButtonY=aboutButton.getBoundingClientRect().top+scrollY;tick()}
 function tick(){busy=false;const vh=innerHeight,sy=scrollY;
 if(sy+vh>mqY-100&&sy<mqY+mqH+100){const off=(sy-mqY+vh)*.3;r1.style.transform=`translate3d(${off-200}px,0,0)`;r2.style.transform=`translate3d(${-(off-200)}px,0,0)`}
-const p=clamp((.8*vh-(atY-sy))/(.6*vh+atH)),n=ch.length;
+const start=atY-.98*vh,end=aboutButtonY-.88*vh;
+const p=clamp((sy-start)/(end-start)),n=ch.length;
 ch.forEach((c,i)=>{const o=Math.round((.2+.8*clamp(p*n-i))*50)/50;if(o!==prev[i]){prev[i]=o;c.style.opacity=o}})}
 const req=()=>{if(!busy){busy=true;requestAnimationFrame(tick)}};
 addEventListener('scroll',req,{passive:true});addEventListener('resize',measure);addEventListener('load',measure);measure();
