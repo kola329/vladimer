@@ -33,14 +33,24 @@ h1 em{font-style:normal;color:var(--a)}
 .row{display:flex;gap:.75rem;width:max-content;will-change:transform;margin:0 0 .75rem -500px}
 .row img{width:420px;height:270px;object-fit:cover;border-radius:1rem;flex:none}
 @media(max-width:767px){
-  .row{
-    width:100%;margin:0 0 .75rem;padding:0 1rem;
-    overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;
-    will-change:auto;transform:none!important
+  .row{margin-left:-120px}
+  .row img{width:min(83vw,420px);height:auto;aspect-ratio:14/9}
+  .row img:nth-child(n+4){display:none}
+}
+@supports (view-timeline: --carousel block) and (animation-timeline: --carousel){
+  @media(max-width:767px){
+    .mq{view-timeline:--carousel block}
+    #r1{animation:carousel-forward 1s linear both;animation-timeline:--carousel}
+    #r2{animation:carousel-backward 1s linear both;animation-timeline:--carousel}
   }
-  .row::-webkit-scrollbar{display:none}
-  .row img{width:min(83vw,420px);height:auto;aspect-ratio:14/9;scroll-snap-align:start;scroll-margin-left:1rem}
-  .row img:nth-child(n+9){display:none}
+}
+@keyframes carousel-forward{
+  from{transform:translate3d(-100px,0,0)}
+  to{transform:translate3d(100px,0,0)}
+}
+@keyframes carousel-backward{
+  from{transform:translate3d(100px,0,0)}
+  to{transform:translate3d(-100px,0,0)}
 }
 /* about */
 .about{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4rem;padding:5rem 1.25rem;text-align:center}
@@ -149,7 +159,7 @@ lb.addEventListener('click',e=>{if(e.target.closest('.x')||e.target===lb)closeLb
 addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
 let tx=0;lb.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});lb.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)step(d>0?-1:1)});
 // marquee
-const mk=a=>{let h='';for(let k=0;k<2;k++)a.forEach(s=>h+=`<img loading="lazy" decoding="async" src="images/carousel/${s}.webp" alt="">`);return h};
+const mk=a=>{let h='';for(let k=0;k<2;k++)a.forEach(s=>h+=`<img loading="lazy" decoding="async" src="images/carousel/${s}.webp" width="840" height="540" alt="">`);return h};
 const r1=$('#r1'),r2=$('#r2');r1.innerHTML=mk(['z1','e1','k1','z4','e4','z8','k3','e5']);r2.innerHTML=mk(['z3','k5','e2','z7','sun','z2','e6','k4']);
 // about text
 const at=$('#at'),t=at.textContent;at.textContent='';const ch=[...t].map(c=>{const s=document.createElement('span');s.textContent=c;at.appendChild(s);return s});
@@ -157,21 +167,26 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.targ
 document.querySelectorAll('.fade').forEach(e=>io.observe(e));
 const mq=document.querySelector('.mq'),aboutButton=at.parentElement.querySelector('.btn');
 const compactCarousel=matchMedia('(max-width:767px)');
+const hasScrollTimeline=CSS.supports('view-timeline','--carousel block') &&
+  CSS.supports('animation-timeline','--carousel');
 let lastOffset,lastReveal;
 let mqY=0,mqH=0,atY=0,aboutButtonY=0,busy=false;const prev=new Array(ch.length).fill(-1);
 function measure(){const a=mq.getBoundingClientRect(),b=at.getBoundingClientRect();mqY=a.top+scrollY;mqH=a.height;atY=b.top+scrollY;aboutButtonY=aboutButton.getBoundingClientRect().top+scrollY;tick()}
 function tick(){busy=false;const vh=innerHeight,sy=scrollY;
-if(!compactCarousel.matches&&sy+vh>mqY-100&&sy<mqY+mqH+100){
+const mobile=compactCarousel.matches;
+if((!mobile||!hasScrollTimeline)&&sy+vh>mqY-100&&sy<mqY+mqH+100){
   const distance=sy-mqY+vh;
-  const off=distance*.3-200;
+  const off=mobile
+    ? Math.round((clamp(distance/(vh+mqH))-.5)*200)
+    : distance*.3-200;
   if(off!==lastOffset){
     lastOffset=off;
     r1.style.transform=`translate3d(${off}px,0,0)`;
     r2.style.transform=`translate3d(${-off}px,0,0)`;
   }
 }
-const start=atY-(compactCarousel.matches?1.03:.98)*vh;
-const end=compactCarousel.matches
+const start=atY-(mobile?1.03:.98)*vh;
+const end=mobile
   ? Math.min(aboutButtonY-.92*vh,atY-.36*vh)
   : aboutButtonY-.88*vh;
 const p=clamp((sy-start)/(end-start)),n=ch.length;
