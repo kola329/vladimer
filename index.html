@@ -55,6 +55,7 @@ h1 em{font-style:normal;color:var(--a)}
 /* about */
 .about{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4rem;padding:5rem 1.25rem;text-align:center}
 .txt{max-width:860px;font-weight:500;line-height:1.5;font-size:clamp(1.3rem,3.2vw,2.4rem)}
+.txt p+p{margin-top:1em}
 .txt span{opacity:.2}
 .stack{display:flex;flex-direction:column;align-items:center;gap:3rem}
 @media(min-width:768px){.btn.lg{padding:1.4rem 4.2rem;font-size:1.35rem}}
@@ -117,7 +118,11 @@ h1 em{font-style:normal;color:var(--a)}
 <section class="mq"><div class="row" id="r1"></div><div class="row" id="r2"></div></section>
 <section class="about" id="about">
  <h2 class="big fade">Обо мне</h2>
- <div class="stack"><p class="txt" id="at">Меня зовут Владимир. Я занимаюсь 3D-визуализацией: интерьеры, экстерьеры, предметная нейровизуализация и улучшение рендеров с помощью нейросетей. Давайте создадим что-то невероятное вместе!</p><a class="btn lg" href="https://t.me/Real_3d_vizer" target="_blank" rel="noopener">Связаться</a></div>
+ <div class="stack"><div class="txt" id="at">
+  <p>Меня зовут Владимир. Я 8 лет занимаюсь 3D графикой и визуализацией: интерьеры, экстерьеры, предметная нейровизуализация и улучшение рендеров с помощью передовых AI-технологий.</p>
+  <p>Имею огромный багаж знаний и насмотренности, за плечами более 150 различных проектов.</p>
+  <p>Давайте создадим что-то невероятное вместе!</p>
+ </div><a class="btn lg" href="https://t.me/Real_3d_vizer" target="_blank" rel="noopener">Связаться</a></div>
 </section>
 <section class="svc" id="services"><h2 class="big fade">Услуги</h2><div id="blocks"></div></section>
 <section class="ct" id="contacts">
@@ -162,7 +167,17 @@ let tx=0;lb.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:tr
 const mk=a=>{let h='';for(let k=0;k<2;k++)a.forEach(s=>h+=`<img loading="lazy" decoding="async" src="images/carousel/${s}.webp" width="840" height="540" alt="">`);return h};
 const r1=$('#r1'),r2=$('#r2');r1.innerHTML=mk(['z1','e1','k1','z4','e4','z8','k3','e5']);r2.innerHTML=mk(['z3','k5','e2','z7','sun','z2','e6','k4']);
 // about text
-const at=$('#at'),t=at.textContent;at.textContent='';const ch=[...t].map(c=>{const s=document.createElement('span');s.textContent=c;at.appendChild(s);return s});
+const at=$('#at');
+const ch=Array.from(at.querySelectorAll('p')).flatMap(paragraph=>{
+  const text=paragraph.textContent;
+  paragraph.textContent='';
+  return [...text].map(character=>{
+    const span=document.createElement('span');
+    span.textContent=character;
+    paragraph.appendChild(span);
+    return span;
+  });
+});
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'50px'});
 document.querySelectorAll('.fade').forEach(e=>io.observe(e));
 const mq=document.querySelector('.mq'),aboutButton=at.parentElement.querySelector('.btn');
