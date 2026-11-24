@@ -185,10 +185,8 @@ if((!mobile||!hasScrollTimeline)&&sy+vh>mqY-100&&sy<mqY+mqH+100){
     r2.style.transform=`translate3d(${-off}px,0,0)`;
   }
 }
-const start=atY-(mobile?1.03:.98)*vh;
-const end=mobile
-  ? Math.min(aboutButtonY-.92*vh,atY-.36*vh)
-  : aboutButtonY-.88*vh;
+const start=atY-(mobile?1.20:.98)*vh;
+const end=mobile ? atY-.65*vh : aboutButtonY-.88*vh;
 const p=clamp((sy-start)/(end-start)),n=ch.length;
 if(p===lastReveal)return;
 lastReveal=p;
