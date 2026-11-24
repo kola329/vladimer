@@ -32,6 +32,11 @@ h1 em{font-style:normal;color:var(--a)}
 .mq{background:var(--b);padding:2rem 0 .75rem;overflow:hidden;margin-top:4rem}
 .row{display:flex;gap:.75rem;width:max-content;will-change:transform;margin:0 0 .75rem -500px}
 .row img{width:420px;height:270px;object-fit:cover;border-radius:1rem;flex:none}
+@media(max-width:767px){
+  .row{margin-left:-120px}
+  .row img{width:min(83vw,420px);height:auto;aspect-ratio:14/9}
+  .row img:nth-child(n+9){display:none}
+}
 /* about */
 .about{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4rem;padding:5rem 1.25rem;text-align:center}
 .txt{max-width:860px;font-weight:500;line-height:1.5;font-size:clamp(1.3rem,3.2vw,2.4rem)}
@@ -146,12 +151,29 @@ const at=$('#at'),t=at.textContent;at.textContent='';const ch=[...t].map(c=>{con
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'50px'});
 document.querySelectorAll('.fade').forEach(e=>io.observe(e));
 const mq=document.querySelector('.mq'),aboutButton=at.parentElement.querySelector('.btn');
+const compactCarousel=matchMedia('(max-width:767px)');
+let lastOffset,lastReveal;
 let mqY=0,mqH=0,atY=0,aboutButtonY=0,busy=false;const prev=new Array(ch.length).fill(-1);
 function measure(){const a=mq.getBoundingClientRect(),b=at.getBoundingClientRect();mqY=a.top+scrollY;mqH=a.height;atY=b.top+scrollY;aboutButtonY=aboutButton.getBoundingClientRect().top+scrollY;tick()}
 function tick(){busy=false;const vh=innerHeight,sy=scrollY;
-if(sy+vh>mqY-100&&sy<mqY+mqH+100){const off=(sy-mqY+vh)*.3;r1.style.transform=`translate3d(${off-200}px,0,0)`;r2.style.transform=`translate3d(${-(off-200)}px,0,0)`}
-const start=atY-.98*vh,end=aboutButtonY-.88*vh;
+if(sy+vh>mqY-100&&sy<mqY+mqH+100){
+  const distance=sy-mqY+vh;
+  const off=compactCarousel.matches
+    ? Math.round((clamp(distance/(vh+mqH))-.5)*200)
+    : distance*.3-200;
+  if(off!==lastOffset){
+    lastOffset=off;
+    r1.style.transform=`translate3d(${off}px,0,0)`;
+    r2.style.transform=`translate3d(${-off}px,0,0)`;
+  }
+}
+const start=atY-(compactCarousel.matches?1.03:.98)*vh;
+const end=compactCarousel.matches
+  ? Math.min(aboutButtonY-.92*vh,atY-.36*vh)
+  : aboutButtonY-.88*vh;
 const p=clamp((sy-start)/(end-start)),n=ch.length;
+if(p===lastReveal)return;
+lastReveal=p;
 ch.forEach((c,i)=>{const o=Math.round((.2+.8*clamp(p*n-i))*50)/50;if(o!==prev[i]){prev[i]=o;c.style.opacity=o}})}
 const req=()=>{if(!busy){busy=true;requestAnimationFrame(tick)}};
 addEventListener('scroll',req,{passive:true});addEventListener('resize',measure);addEventListener('load',measure);measure();
