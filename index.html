@@ -33,8 +33,13 @@ h1 em{font-style:normal;color:var(--a)}
 .row{display:flex;gap:.75rem;width:max-content;will-change:transform;margin:0 0 .75rem -500px}
 .row img{width:420px;height:270px;object-fit:cover;border-radius:1rem;flex:none}
 @media(max-width:767px){
-  .row{margin-left:-120px}
-  .row img{width:min(83vw,420px);height:auto;aspect-ratio:14/9}
+  .row{
+    width:100%;margin:0 0 .75rem;padding:0 1rem;
+    overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;
+    will-change:auto;transform:none!important
+  }
+  .row::-webkit-scrollbar{display:none}
+  .row img{width:min(83vw,420px);height:auto;aspect-ratio:14/9;scroll-snap-align:start;scroll-margin-left:1rem}
   .row img:nth-child(n+9){display:none}
 }
 /* about */
@@ -156,11 +161,9 @@ let lastOffset,lastReveal;
 let mqY=0,mqH=0,atY=0,aboutButtonY=0,busy=false;const prev=new Array(ch.length).fill(-1);
 function measure(){const a=mq.getBoundingClientRect(),b=at.getBoundingClientRect();mqY=a.top+scrollY;mqH=a.height;atY=b.top+scrollY;aboutButtonY=aboutButton.getBoundingClientRect().top+scrollY;tick()}
 function tick(){busy=false;const vh=innerHeight,sy=scrollY;
-if(sy+vh>mqY-100&&sy<mqY+mqH+100){
+if(!compactCarousel.matches&&sy+vh>mqY-100&&sy<mqY+mqH+100){
   const distance=sy-mqY+vh;
-  const off=compactCarousel.matches
-    ? Math.round((clamp(distance/(vh+mqH))-.5)*200)
-    : distance*.3-200;
+  const off=distance*.3-200;
   if(off!==lastOffset){
     lastOffset=off;
     r1.style.transform=`translate3d(${off}px,0,0)`;
