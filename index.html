@@ -185,8 +185,8 @@ const mq=document.querySelector('.mq'),aboutButton=at.parentElement.querySelecto
 const compactCarousel=matchMedia('(max-width:767px)');
 const hasScrollTimeline=CSS.supports('view-timeline','--carousel block') &&
   CSS.supports('animation-timeline','--carousel');
-let lastOffset,lastReveal;
-let mqY=0,mqH=0,atY=0,aboutButtonY=0,busy=false;const prev=new Array(ch.length).fill(-1);
+let lastOffset,lastReveal=0,revealFrame=performance.now();
+let mqY=0,mqH=0,atY=0,aboutButtonY=0,busy=false;
 function measure(){const a=mq.getBoundingClientRect(),b=at.getBoundingClientRect();mqY=a.top+scrollY;mqH=a.height;atY=b.top+scrollY;aboutButtonY=aboutButton.getBoundingClientRect().top+scrollY;tick()}
 function tick(){busy=false;const vh=innerHeight,sy=scrollY;
 const mobile=compactCarousel.matches;
@@ -201,12 +201,27 @@ if((!mobile||!hasScrollTimeline)&&sy+vh>mqY-100&&sy<mqY+mqH+100){
     r2.style.transform=`translate3d(${-off}px,0,0)`;
   }
 }
-const start=atY-(mobile?1.20:.98)*vh;
-const end=mobile ? atY-.65*vh : aboutButtonY-.88*vh;
-const p=clamp((sy-start)/(end-start)),n=ch.length;
-if(p===lastReveal)return;
-lastReveal=p;
-ch.forEach((c,i)=>{const o=Math.round((.2+.8*clamp(p*n-i))*50)/50;if(o!==prev[i]){prev[i]=o;c.style.opacity=o}})}
+const start=atY-(mobile?.94:.98)*vh;
+const end=mobile ? Math.min(atY-.50*vh,aboutButtonY-.92*vh) : aboutButtonY-.88*vh;
+const target=clamp((sy-start)/(end-start));
+let reveal=target;
+const now=performance.now();
+if(mobile&&sy+vh>atY&&sy<aboutButtonY){
+  const step=Math.min((now-revealFrame)/420,.12);
+  const difference=target-lastReveal;
+  if(Math.abs(difference)>step){
+    reveal=lastReveal+Math.sign(difference)*step;
+    req();
+  }
+}
+revealFrame=now;
+if(reveal===lastReveal)return;
+const previous=lastReveal*ch.length,current=reveal*ch.length;
+for(let i=Math.floor(Math.min(previous,current));i<Math.ceil(Math.max(previous,current));i++){
+  ch[i].style.opacity=.2+.8*clamp(current-i);
+}
+lastReveal=reveal;
+}
 const req=()=>{if(!busy){busy=true;requestAnimationFrame(tick)}};
 addEventListener('scroll',req,{passive:true});addEventListener('resize',measure);addEventListener('load',measure);measure();
 </script></body></html>
