@@ -131,9 +131,10 @@ h1 em{font-style:normal;color:var(--a)}
  <small><img id="lg2" alt=""> © Владимир · 3D-визуализация</small>
 </section>
 <script>
-const IMG=Object.fromEntries(["z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8", "z9", "k1", "k2", "k3", "k4", "k5", "e1", "e2", "e3", "e4", "e5", "e6", "bc", "br", "kr", "gha", "ghb", "dha", "dhb", "cha", "chb", "sba", "sbb", "soa", "sob", "sga", "sgb", "sun", "day", "win", "col"].map(k=>[k,'images/'+k+'.jpg']));IMG.logo='images/logo.png';
-const TH=Object.fromEntries(["z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8", "z9", "k1", "k2", "k3", "k4", "k5", "e1", "e2", "e3", "e4", "e5", "e6", "bc", "br", "kr", "gha", "ghb", "dha", "dhb", "cha", "chb", "sba", "sbb", "soa", "sob", "sga", "sgb", "sun", "day", "win", "col"].map(k=>[k,'images/t/'+k+'.jpg']));
-const DIM={"z1": [640, 423], "z2": [640, 457], "z3": [523, 640], "z4": [417, 640], "z5": [575, 640], "z6": [432, 640], "z7": [432, 640], "z8": [480, 640], "z9": [550, 640], "k1": [494, 640], "k2": [536, 640], "k3": [640, 486], "k4": [429, 640], "k5": [476, 640], "e1": [640, 360], "e2": [357, 640], "e3": [542, 640], "e4": [640, 383], "e5": [640, 433], "e6": [640, 478], "bc": [640, 428], "br": [640, 478], "kr": [640, 478], "gha": [640, 383], "ghb": [640, 383], "dha": [640, 433], "dhb": [640, 433], "cha": [640, 480], "chb": [478, 640], "sba": [640, 480], "sbb": [640, 478], "soa": [640, 640], "sob": [640, 478], "sga": [640, 425], "sgb": [640, 357], "sun": [640, 357], "day": [640, 360], "win": [640, 357], "col": [640, 461]};
+const imageRevision=k=>k==='sun'?'?v=2222':'';
+const IMG=Object.fromEntries(["z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8", "z9", "k1", "k2", "k3", "k4", "k5", "e1", "e2", "e3", "e4", "e5", "e6", "bc", "br", "kr", "gha", "ghb", "dha", "dhb", "cha", "chb", "sba", "sbb", "soa", "sob", "sga", "sgb", "sun", "day", "win", "col"].map(k=>[k,'images/'+k+'.jpg'+imageRevision(k)]));IMG.logo='images/logo.png';
+const TH=Object.fromEntries(["z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8", "z9", "k1", "k2", "k3", "k4", "k5", "e1", "e2", "e3", "e4", "e5", "e6", "bc", "br", "kr", "gha", "ghb", "dha", "dhb", "cha", "chb", "sba", "sbb", "soa", "sob", "sga", "sgb", "sun", "day", "win", "col"].map(k=>[k,'images/t/'+k+'.jpg'+imageRevision(k)]));
+const DIM={"z1": [640, 423], "z2": [640, 457], "z3": [523, 640], "z4": [417, 640], "z5": [575, 640], "z6": [432, 640], "z7": [432, 640], "z8": [480, 640], "z9": [550, 640], "k1": [494, 640], "k2": [536, 640], "k3": [640, 486], "k4": [429, 640], "k5": [476, 640], "e1": [640, 360], "e2": [357, 640], "e3": [542, 640], "e4": [640, 383], "e5": [640, 433], "e6": [640, 478], "bc": [640, 428], "br": [640, 478], "kr": [640, 478], "gha": [640, 383], "ghb": [640, 383], "dha": [640, 433], "dhb": [640, 433], "cha": [640, 480], "chb": [478, 640], "sba": [640, 480], "sbb": [640, 478], "soa": [640, 640], "sob": [640, 478], "sga": [640, 425], "sgb": [640, 357], "sun": [1280, 714], "day": [640, 360], "win": [640, 357], "col": [640, 461]};
 const $=s=>document.querySelector(s),clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
 $('#lg').src=$('#lg2').src=IMG.logo;
 const im=(k,c='')=>`<img class="${c}" loading="lazy" src="${IMG[k]}" alt="">`;
@@ -164,7 +165,7 @@ lb.addEventListener('click',e=>{if(e.target.closest('.x')||e.target===lb)closeLb
 addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
 let tx=0;lb.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});lb.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)step(d>0?-1:1)});
 // marquee
-const mk=a=>{let h='';for(let k=0;k<2;k++)a.forEach(s=>h+=`<img loading="lazy" decoding="async" src="images/carousel/${s}.webp" width="840" height="540" alt="">`);return h};
+const mk=a=>{let h='';for(let k=0;k<2;k++)a.forEach(s=>h+=`<img loading="lazy" decoding="async" src="images/carousel/${s}.webp${imageRevision(s)}" width="840" height="540" alt="">`);return h};
 const r1=$('#r1'),r2=$('#r2');r1.innerHTML=mk(['z1','e1','k1','z4','e4','z8','k3','e5']);r2.innerHTML=mk(['z3','k5','e2','z7','sun','z2','e6','k4']);
 // about text
 const at=$('#at');
